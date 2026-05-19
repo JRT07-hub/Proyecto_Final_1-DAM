@@ -1,23 +1,27 @@
 package Agencia_DTO;
 
+import Agencia_Excepciones.AgenciaException;
+
 public class ClienteDTO extends Persona {
 	 private String dni,correo,direccion,pasaporte,telefono;
 	 
-	 public ClienteDTO(String nombreComp, String dni, String correo, String telefono, String direccion) {
+	 public ClienteDTO(String nombreComp, String dni, String correo, String telefono, String direccion) throws AgenciaException {
 			super(nombreComp);
 			this.dni = dni;
 			this.correo = correo;
 			this.telefono = telefono;
 			this.direccion = direccion;
+			validar();
 		 }
 	 
-	 public ClienteDTO(String nombreComp, String dni, String correo, String telefono, String direccion, String pasaporte) {
+	 public ClienteDTO(String nombreComp, String dni, String correo, String telefono, String direccion, String pasaporte) throws AgenciaException {
 		super(nombreComp);
 		this.dni = dni;
 		this.correo = correo;
 		this.telefono = telefono;
 		this.direccion = direccion;
 		this.pasaporte = pasaporte;
+		validar();
 	 }
 
 	 public String getDni() {return dni;}
@@ -42,8 +46,6 @@ public class ClienteDTO extends Persona {
 		    if (this.correo == null || !this.correo.matches("^[\\w.]+@[\\w.]+\\.[a-zA-Z]{2,}$")) {
 		        throw new AgenciaException("El formato del correo es inválido.");}
 
-		   
-		   
 		    if (this.telefono == null || !this.telefono.matches("\\d{9}")) {  // \d significa "dígito" (0-9) y {9} significa "exactamente 9 veces"
 		    	throw new AgenciaException("El teléfono debe estar compuesto por 9 números.");}
 		    

@@ -1,4 +1,4 @@
-package Agencia_DTO;
+package Agencia_Excepciones;
 
 public class AgenciaException extends Exception{
 	// Esto es un ID para que Java identifique esta versión de la clase

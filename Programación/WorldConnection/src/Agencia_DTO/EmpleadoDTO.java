@@ -1,12 +1,14 @@
 package Agencia_DTO;
 
+import Agencia_Excepciones.AgenciaException;
+
 public class EmpleadoDTO extends Persona{
 	private int ID_Empleado;
 	private Cargo cargo;
 	private String especialidad; 
     private Turno turno; 
     private int anios_experiencia;
-	public EmpleadoDTO(String nombreComp, int iD_Empleado, Cargo cargo, String Especialidad, Turno turno,int anios_experiencia) {
+	public EmpleadoDTO(String nombreComp, int iD_Empleado, Cargo cargo, String Especialidad, Turno turno,int anios_experiencia)throws AgenciaException {
 		super(nombreComp);
 		ID_Empleado = iD_Empleado;
 		this.cargo = cargo;
@@ -14,6 +16,7 @@ public class EmpleadoDTO extends Persona{
 		this.turno = turno;
 		this.anios_experiencia = anios_experiencia;
 		actualizarCargoSegunExperiencia();
+		validar();
 	}
 	
 	public int getID_Empleado() {return ID_Empleado;}
@@ -28,6 +31,11 @@ public class EmpleadoDTO extends Persona{
 	public void setAnios_experiencia(int anios_experiencia) {this.anios_experiencia = anios_experiencia;}
 	
 	public void actualizarCargoSegunExperiencia() {
+		//Cargos especiales no se modifican,los únicos que "ascienden" son los agentes que se modifican según su años de experiencia
+		if (this.cargo == Cargo.GERENTE || this.cargo == Cargo.PRODUCT_MANAGER || this.cargo == Cargo.GUIA_TURISTICO) {
+		        return;
+		    }
+		
 	    if (this.anios_experiencia < 2) {
 	        this.cargo = Cargo.AGENTE_JUNIOR;
 	    } else if (this.anios_experiencia < 8) {
