@@ -13,7 +13,7 @@ public class ClienteDAO implements Idao<ClienteDTO, String> {
     // =========================================================================
     @Override
     public void insertar(ClienteDTO cliente) throws AgenciaException {
-        // REQUISITO MÍNIMO 2: Uso obligatorio de PreparedStatement para evitar SQL Injection
+    	
         String sql = "INSERT INTO cliente (DNI, NombreCompleto, Correo, Telefono, Direccion, Pasaporte) VALUES (?, ?, ?, ?, ?, ?)";
         
         try (Connection con = Conexion.getConexion();
@@ -24,12 +24,11 @@ public class ClienteDAO implements Idao<ClienteDTO, String> {
             ps.setString(3, cliente.getCorreo());
             ps.setString(4, cliente.getTelefono());
             ps.setString(5, cliente.getDireccion());
-            ps.setString(6, cliente.getPasaporte()); // Puede ser null en la BD si no lo tiene asignado
+            ps.setString(6, cliente.getPasaporte());
             
             ps.executeUpdate();
             
         } catch (SQLException e) {
-            // REQUISITO MÍNIMO 10: Captura de excepciones y mapeo a tu excepción personalizada
             throw new AgenciaException("Error de base de datos al registrar el cliente: " + e.getMessage());
         }
     }
@@ -48,7 +47,7 @@ public class ClienteDAO implements Idao<ClienteDTO, String> {
             ps.setString(2, cliente.getCorreo());
             ps.setString(3, cliente.getTelefono());
             ps.setString(4, cliente.getDireccion());
-            ps.setString(6, cliente.getDni()); // El WHERE filtra por su clave primaria
+            ps.setString(6, cliente.getDni());
             
             if (cliente.getPasaporte() != null) {
                 ps.setString(5, cliente.getPasaporte());
@@ -82,7 +81,7 @@ public class ClienteDAO implements Idao<ClienteDTO, String> {
     }
 
  // =========================================================================
-    // 4. OPERACIÓN: BUSCAR POR ID / DNI (R de CRUD) -> ¡CORREGIDO EL RETORNO!
+    // 4. OPERACIÓN: BUSCAR POR ID / DNI (R de CRUD)
     // =========================================================================
     @Override
     public ClienteDTO buscarPorId(String dni) throws AgenciaException {
@@ -96,7 +95,7 @@ public class ClienteDAO implements Idao<ClienteDTO, String> {
             
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    // Reconstruimos el objeto DTO usando tu constructor exacto
+
                     cliente = new ClienteDTO(
                         rs.getString("NombreCompleto"),
                         rs.getString("DNI"),
@@ -111,7 +110,7 @@ public class ClienteDAO implements Idao<ClienteDTO, String> {
             throw new AgenciaException("Error de base de datos al buscar cliente: " + e.getMessage());
         }
         
-        return cliente; // Ahora sí devuelve el cliente encontrado o null si no existe
+        return cliente;
     }
 
     // =========================================================================
@@ -147,11 +146,11 @@ public class ClienteDAO implements Idao<ClienteDTO, String> {
     // EXTRA: ENLAZAR CON TUS SCRIPTS PROCEDIMIENTOS ALMACENADOS DE MYSQL
     // =========================================================================
     /**
-     * Mapea tu PROCEDIMIENTO 3: sp_AplicarDescuentoFidelidad.
+     * Mapea PROCEDIMIENTO 3: sp_AplicarDescuentoFidelidad.
      * Modifica el importe masivo de las reservas de los clientes VIP directamente en la BD.
      */
     public void aplicarDescuentoVIPEnBD(double porcentaje) throws AgenciaException {
-        String sql = "{CALL sp_AplicarDescuentoFidelidad(?)}"; // Llamada exacta a tu script
+        String sql = "{CALL sp_AplicarDescuentoFidelidad(?)}";
         
         try (Connection con = Conexion.getConexion();
              CallableStatement cs = con.prepareCall(sql)) {
