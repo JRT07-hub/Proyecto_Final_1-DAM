@@ -3,6 +3,8 @@ package Agencia_Vista;
 import Agencia_DAO.CategoriaDAO;
 import Agencia_DTO.CategoriaDTO;
 import Agencia_Excepciones.AgenciaException;
+
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -41,7 +43,11 @@ public class CategoriaVista {
                         System.out.println("\n--- LISTADO DE CATEGORÍAS ---");
                         List<CategoriaDTO> lista = categoriaDao.listarTodos();
                         if(lista.isEmpty()) System.out.println("No hay categorías en la base de datos.");
-                        else lista.forEach(c -> System.out.println("• ID: " + c.getIdCategoria() + " -> " + c.getNombreCat()));
+                        else { 
+                        	Iterator<CategoriaDTO> it = lista.iterator();
+                        	while (it.hasNext()) {
+                            CategoriaDTO c = it.next();
+                            System.out.println("• ID: " + c.getIdCategoria() + " -> " + c.getNombreCat());}}
                         break;
 
                     case 3:

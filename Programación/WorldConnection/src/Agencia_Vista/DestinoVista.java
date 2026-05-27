@@ -1,10 +1,12 @@
 package Agencia_Vista;
 
-import Agencia_DAO.DestinoDAO;
+import Agencia_DAO.DestinoDAO;	
 import Agencia_DAO.CategoriaDAO;
 import Agencia_DTO.DestinoDTO;
 import Agencia_DTO.CategoriaDTO;
 import Agencia_Excepciones.AgenciaException;
+
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -59,8 +61,10 @@ public class DestinoVista {
                         List<DestinoDTO> lista = destinoDao.listarTodos();
                         if(lista.isEmpty()) System.out.println("El catálogo está vacío.");
                         else {
-                            for(DestinoDTO d : lista) {
-                                System.out.println("• [" + d.getCodDestino() + "] " + d.getNombreDestino() + " (" + d.getCiudad() + ", " + d.getPais() + ") | Precio Base: " + d.getPrecioBase() + "€ | Categoria: " + d.getCategoria().getNombreCat());
+                        	Iterator<DestinoDTO> it = lista.iterator();
+                            while (it.hasNext()) {
+                                DestinoDTO d = it.next();
+                            System.out.println("• [" + d.getCodDestino() + "] " + d.getNombreDestino() + " (" + d.getCiudad() + ", " + d.getPais() + ") | Precio Base: " + d.getPrecioBase() + "€ | Categoria: " + d.getCategoria().getNombreCat());
                             }
                         }
                         break;

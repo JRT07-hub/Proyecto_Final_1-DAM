@@ -5,6 +5,8 @@ import Agencia_DTO.EmpleadoDTO;
 import Agencia_DTO.Cargo;
 import Agencia_DTO.Turno;
 import Agencia_Excepciones.AgenciaException;
+
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -50,8 +52,14 @@ public class EmpleadoVista {
                         System.out.println("\n--- LISTADO GENERAL DE EMPLEADOS ---");
                         List<EmpleadoDTO> lista = empleadoDao.listarTodos();
                         if(lista.isEmpty()) System.out.println("No hay empleados registrados.");
-                        else lista.forEach(e -> System.out.println("• ID: " + e.getID_Empleado() + " | " + e.getNombreCompleto() + " [" + e.getCargo() + "] - Exp: " + e.getAnios_experiencia() + " años"));
-                        break;
+                        else {
+                        	Iterator<EmpleadoDTO> it = lista.iterator();
+                        while (it.hasNext()) {
+                            EmpleadoDTO e = it.next();
+                            System.out.println("• ID: " + e.getID_Empleado() + " | " + e.getNombreCompleto() + " [" + e.getCargo() + "] - Exp: " + e.getAnios_experiencia() + " años");
+                        }
+                        }
+                            break;
 
                     case 3:
                         System.out.println("\n--- BUSCAR EMPLEADO ---");

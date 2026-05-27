@@ -13,6 +13,7 @@ import Agencia_Excepciones.AgenciaException;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -73,7 +74,9 @@ public class ReservaVista {
                         List<ReservaDTO> lista = reservaDao.listarTodos();
                         if(lista.isEmpty()) System.out.println("No constan registros en la base de datos.");
                         else {
-                            for(ReservaDTO r : lista) {
+                        	Iterator<ReservaDTO> it = lista.iterator();
+                            while (it.hasNext()) {
+                                ReservaDTO r = it.next();
                                 System.out.println("ID: " + r.getIdReserva() + " | Cliente: " + r.getCliente().getNombreCompleto() + " | Destino: " + r.getDestino().getNombreDestino() + " | Total: " + r.getImporteTotal() + "€ [" + r.getEstado() + "]");
                             }
                         }

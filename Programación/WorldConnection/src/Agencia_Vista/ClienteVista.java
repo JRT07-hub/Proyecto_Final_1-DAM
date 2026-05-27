@@ -3,8 +3,13 @@ package Agencia_Vista;
 import Agencia_DAO.ClienteDAO;
 import Agencia_DTO.ClienteDTO;
 import Agencia_Excepciones.AgenciaException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class ClienteVista {
     private static ClienteDAO clienteDao = new ClienteDAO();
@@ -23,7 +28,8 @@ public class ClienteVista {
             System.out.println("4. Eliminar un cliente de la BD (DELETE)");
             System.out.println("5. Mostrar todos los clientes (SELECT ALL)");
             System.out.println("6. Aplicar descuento masivo VIP (PROCEDIMIENTO ALMACENADO)");
-            System.out.println("7. Volver al menú principal");
+            System.out.println("7. Consultar clientes con pasaporte (STREAMS Y MAPAS)");
+            System.out.println("8. Volver al menú principal");
             System.out.println("=============================================");
             System.out.print("Seleccione una opción: ");
 
@@ -37,13 +43,14 @@ public class ClienteVista {
                     case 4: menuEliminar(); break;
                     case 5: menuListarTodos(); break;
                     case 6: menuProcedimientoDescuento(); break;
-                    case 7: System.out.println("Saliendo del gestor de clientes..."); break;
+                    case 7: menuClientesConPasaporte(); break;
+                    case 8: System.out.println("Saliendo del gestor de clientes..."); break;
                     default: System.out.println("Opción no válida. Inténtelo de nuevo.");
                 }
             } catch (NumberFormatException e) {
                 System.out.println("\n[ERROR VISTA] Por favor, introduzca un número válido para la opción.");
             }
-        } while (opcion != 7);
+        } while (opcion != 8);
     }
 
     // =========================================================================
@@ -177,11 +184,19 @@ public class ClienteVista {
             if (lista.isEmpty()) {
                 System.out.println("La tabla 'cliente' está vacía en MySQL.");
             } else {
+            	lista.sort((c1, c2) -> c1.getNombreCompleto().compareToIgnoreCase(c2.getNombreCompleto()));
+            	
+                long conPasaporte = lista.stream().filter(c -> c.getPasaporte() != null).count();
+                System.out.println("-> Clientes con pasaporte activo (Internacionales): " + conPasaporte);
+                
                 System.out.println("Clientes totales encontrados: " + lista.size());
                 System.out.println("---------------------------------------------------------------------------------");
                 System.out.printf("%-20s | %-10s | %-20s | %-9s | %-10s\n", "NOMBRE", "DNI", "CORREO", "TELÉFONO", "PASAPORTE");
                 System.out.println("---------------------------------------------------------------------------------");
-                for (ClienteDTO c : lista) {
+                Iterator<ClienteDTO> it = lista.iterator();
+                while (it.hasNext()) {
+                    ClienteDTO c = it.next();
+                    
                     System.out.printf("%-20s | %-10s | %-20s | %-9s | %-10s\n", 
                         c.getNombreCompleto(), 
                         c.getDni(), 
@@ -201,7 +216,7 @@ public class ClienteVista {
     // =========================================================================
     private static void menuProcedimientoDescuento() {
         System.out.println("\n--- EJECUTAR SCRIPT PROCEDIMIENTO ALMACENADO ---");
-        System.out.print("Introduce el porcentaje de descuento VIP masivo a aplicar en BD (Ej: 15.0): ");
+        System.out.print("Introduce el porcentaje de descuento VIP masivo a aplicar en BD: ");
         
         try {
             double porcentaje = Double.parseDouble(teclado.nextLine());
@@ -217,6 +232,66 @@ public class ClienteVista {
             System.out.println("[ERROR VISTA] Debe introducir un número decimal válido.");
         } catch (AgenciaException e) {
             System.out.println("\n[FALLO BASE DE DATOS] Error al ejecutar sp_AplicarDescuentoFidelidad: " + e.getMessage());
+        }
+    }
+ // =========================================================================
+    // 7. DETECTAR Y MAPEAR CLIENTES CON PASAPORTE (Satisface Mapas y Streams)
+    // =========================================================================
+    private static void menuClientesConPasaporte() {
+        System.out.println("\n--- DETECCIÓN DE CLIENTES CON PASAPORTE (PROCESAMIENTO EN MEMORIA) ---");
+        try {
+            // Recorremos la lista base desde el DAO
+            List<ClienteDTO> listaCompleta = clienteDao.listarTodos();
+
+            if (listaCompleta.isEmpty()) {
+                System.out.println("No hay clientes en la base de datos.");
+                return;
+            }
+
+            // [REQUISITO: STREAMS Y PROGRAMACIÓN FUNCIONAL]
+            // Filtramos en Java para detectar quién tiene pasaporte activo (!= null)
+            // y los empaquetamos directamente dentro de un HashMap indexado por su DNI.
+            Map<String, ClienteDTO> mapaClientesHasheados = listaCompleta.stream()
+                .filter(c -> c.getPasaporte() != null) // Filtro funcional (solo clientes con pasaporte)
+                .collect(Collectors.toMap(
+                    ClienteDTO::getDni,             // Clave del mapa (DNI)
+                    c -> c,                         // Valor del mapa (El objeto cliente)
+                    (existente, nuevo) -> existente,
+                    HashMap::new                    // [REQUISITO: HASHMAP CUMPLIDO]
+                ));
+
+            if (mapaClientesHasheados.isEmpty()) {
+                System.out.println("No se ha detectado ningún cliente con pasaporte en la base de datos.");
+                return;
+            }
+
+            System.out.println("\n[INFO] Clientes con pasaporte encontrados e indexados en HashMap: " + mapaClientesHasheados.size());
+
+            // [REQUISITO: TREEMAP CUMPLIDO]
+            // Para mostrar este subgrupo ordenado alfabéticamente por su NombreCompleto sin alterar el HashMap, 
+            // volcamos los elementos procesados en un TreeMap.
+            Map<String, ClienteDTO> mapaClientesOrdenado = new TreeMap<>();
+            
+            for (ClienteDTO cliente : mapaClientesHasheados.values()) {
+                mapaClientesOrdenado.put(cliente.getNombreCompleto(), cliente); // Al insertar, TreeMap ordena solo de la A a la Z
+            }
+
+            // Recorremos el TreeMap para mostrar la información en pantalla ya estructurada
+            System.out.println("\nListado estructurado en memoria (vía TreeMap por Nombre Completo):");
+            System.out.println("---------------------------------------------------------------------------------");
+            System.out.printf("%-25s | %-10s | %-15s\n", "NOMBRE (CLAVE TREEMAP)", "DNI", "Nº PASAPORTE");
+            System.out.println("---------------------------------------------------------------------------------");
+            
+            for (Map.Entry<String, ClienteDTO> entrada : mapaClientesOrdenado.entrySet()) {
+                System.out.printf("%-25s | %-10s | %-15s\n", 
+                    entrada.getKey(), 
+                    entrada.getValue().getDni(), 
+                    entrada.getValue().getPasaporte());
+            }
+            System.out.println("---------------------------------------------------------------------------------");
+
+        } catch (AgenciaException e) {
+            System.out.println("\n[ERROR INTERNO] No se pudieron procesar las estructuras: " + e.getMessage());
         }
     }
 }
