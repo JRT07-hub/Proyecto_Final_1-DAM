@@ -9,11 +9,20 @@ import Agencia_Excepciones.AgenciaException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
-
+/**
+ * Módulo de visualización e interacción para la gestión de Recursos Humanos de la agencia.
+ * <p>Sirve como puente de comunicación con el {@link EmpleadoDAO}, permitiendo procesar el ciclo 
+ * operativo de la plantilla de trabajo y visualizar métricas de rendimiento interno del personal.</p>
+ */
 public class EmpleadoVista {
     private static EmpleadoDAO empleadoDao = new EmpleadoDAO();
     private static Scanner teclado = new Scanner(System.in);
-
+    /**
+     * Ejecuta el flujo principal de administración de empleados.
+     * <p>Maneja de manera guiada la conversión de texto a constantes enumeradas (Cargo/Turno) 
+     * para el alta de asesores y expone el acceso a la métrica analítica avanzada que calcula 
+     * la comisión total acumulada de un empleado en base a las funciones SQL embebidas en el DAO.</p>
+     */
     public static void ejecutar() {
         int op = 0;
         do {
@@ -34,7 +43,6 @@ public class EmpleadoVista {
                 switch (op) {
                     case 1:
                         System.out.println("\n--- ALTA DE EMPLEADO ---");
-                        System.out.print("ID Empleado (Numérico): "); int id = Integer.parseInt(teclado.nextLine());
                         System.out.print("Nombre Completo: "); String nom = teclado.nextLine();
                         System.out.print("Cargo (AGENTE_JUNIOR, AGENTE_SENIOR, GERENTE...): "); 
                         String cargoIn = teclado.nextLine().trim().replace(" ", "_").toUpperCase();
@@ -43,7 +51,7 @@ public class EmpleadoVista {
                         String turnoIn = teclado.nextLine().trim().toUpperCase();
                         System.out.print("Años Experiencia: "); int exp = Integer.parseInt(teclado.nextLine());
 
-                        EmpleadoDTO nuevo = new EmpleadoDTO(nom, id, Cargo.valueOf(cargoIn), esp, Turno.valueOf(turnoIn), exp);
+                        EmpleadoDTO nuevo = new EmpleadoDTO(nom, Cargo.valueOf(cargoIn), esp, Turno.valueOf(turnoIn), exp);
                         empleadoDao.insertar(nuevo);
                         System.out.println("[ÉXITO] Guardado correctamente en la BD.");
                         break;
@@ -104,7 +112,7 @@ public class EmpleadoVista {
                         System.out.print("ID del Empleado: "); int idC = Integer.parseInt(teclado.nextLine());
                         // Llamada al método complejo que calcula el 2% usando agregaciones SUM de SQL
                         double comision = empleadoDao.calcularComisionEmpleado(idC);
-                        System.out.println("💰 Comisión total acumulada por este asesor: " + comision + "€");
+                        System.out.println("Comisión total acumulada por este asesor: " + comision + "€");
                         break;
                 }
             } catch (IllegalArgumentException e) {

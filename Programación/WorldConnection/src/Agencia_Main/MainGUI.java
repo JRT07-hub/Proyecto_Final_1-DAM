@@ -31,7 +31,7 @@ import Agencia_VistaGUI.ReservaVistaGUI;
 
 public class MainGUI extends Application {
 
-    // VARIABLES GLOBALES DE LA CLASE (Aquí se soluciona el error de tu captura)
+    // VARIABLES GLOBALES DE LA CLASE 
     private BorderPane layoutPrincipal;
     private ClienteDAO clienteDao = new ClienteDAO();
     private EmpleadoDAO empleadoDao = new EmpleadoDAO();

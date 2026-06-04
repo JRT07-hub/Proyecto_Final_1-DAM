@@ -7,11 +7,22 @@ import Agencia_Excepciones.AgenciaException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
-
+/**
+ * Capa de presentación interactiva para la administración de Categorías.
+ * <p>Proporciona un menú de consola que permite al usuario invocar las operaciones 
+ * del {@link CategoriaDAO}, gestionando de manera segura la captura de datos y 
+ * la visualización de registros mediante flujos de texto.</p>
+ */
 public class CategoriaVista {
+	/** Instancia global del DAO para interactuar con la tabla de categorías en MySQL. */
     private static CategoriaDAO categoriaDao = new CategoriaDAO();
+    /** Lector de flujos de entrada por consola para la interacción con el usuario. */
     private static Scanner teclado = new Scanner(System.in);
-
+    /**
+     * Lanza y controla el bucle de ejecución del menú de gestión de categorías.
+     * <p>Presenta opciones para dar de alta, listar, buscar por ID, modificar y eliminar 
+     * categorías de la base de datos. Controla excepciones de formato y errores de persistencia.</p>
+     */
     public static void ejecutar() {
         int op = 0;
         do {
@@ -75,7 +86,7 @@ public class CategoriaVista {
                     case 5:
                         System.out.println("\n--- ELIMINAR CATEGORÍA ---");
                         System.out.print("Introduce ID de la categoría a borrar: "); int idE = Integer.parseInt(teclado.nextLine());
-                        System.out.print("⚠️ ¿Seguro que deseas eliminarla? Si hay destinos asociados fallará por integridad (SI/NO): ");
+                        System.out.print("¿Seguro que deseas eliminarla? Si hay destinos asociados fallará por integridad (SI/NO): ");
                         if(teclado.nextLine().equalsIgnoreCase("SI")) {
                             categoriaDao.eliminar(idE);
                             System.out.println("[ÉXITO] Registro eliminado de la BD.");

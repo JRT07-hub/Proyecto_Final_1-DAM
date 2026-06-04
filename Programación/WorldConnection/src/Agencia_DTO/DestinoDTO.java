@@ -1,7 +1,10 @@
 package Agencia_DTO;
 
 import Agencia_Excepciones.AgenciaException;
-
+/**
+ * DTO que representa un Destino Turístico ofertado por la agencia.
+ * Contiene información de precios, duración y su vinculación con una {@link CategoriaDTO}.
+ */
 public class DestinoDTO implements Validar{
 	private String codDestino,nombreDestino,pais,ciudad,descripcion;
 	private double precioBase;
@@ -9,6 +12,7 @@ public class DestinoDTO implements Validar{
 	private boolean disponibilidad;
 	private CategoriaDTO categoria;
 	
+	/** Constructor completo con validación obligatoria inmediata. */
 	public DestinoDTO(String codDestino, String nombreDestino, String pais, String ciudad, String descripcion,double precioBase, int duracion, boolean disponibilidad, CategoriaDTO categoria) throws AgenciaException{
 		this.codDestino = codDestino;
 		this.nombreDestino = nombreDestino;
@@ -21,7 +25,7 @@ public class DestinoDTO implements Validar{
 		this.categoria = categoria;
 		validar();
 	}
-	
+	// GETTERS Y SETTERS
 	public String getCodDestino() {return codDestino;}
 	public void setCodDestino(String codDestino) {this.codDestino = codDestino;}
 	public String getNombreDestino() {return nombreDestino;}
@@ -41,13 +45,28 @@ public class DestinoDTO implements Validar{
 	public CategoriaDTO getCategoria() {return categoria;}
 	public void setCategoria(CategoriaDTO categoria) {this.categoria = categoria;}
 	
+	/**
+     * Aplica un descuento porcentual directo sobre el precio base del destino.
+     * * @param porcentaje Valor numérico entre 0.0 y 100.0 que representa el descuento.
+     * @throws AgenciaException Si el porcentaje está fuera del rango permitido de 0 a 100.
+     */
 	public void aplicarDescuentoTemporada(double porcentaje) throws AgenciaException {
 	    if (porcentaje < 0 || porcentaje > 100) {
 	        throw new AgenciaException("El porcentaje de descuento debe estar entre 0 y 100.");
 	    }
 	    this.precioBase -= this.precioBase * (porcentaje / 100);
 	}
-
+	/**
+     * Valida que las propiedades comerciales del destino sean correctas.
+     * Reglas aplicadas:
+     * <ul>
+     * <li>Código de Destino: Obligatorio y de longitud exacta de 5 caracteres.</li>
+     * <li>Nombre: No puede estar vacío.</li>
+     * <li>Precio Base: Debe ser estrictamente superior a cero.</li>
+     * <li>Duración: Debe durar como mínimo 1 día.</li>
+     * <li>Categoría: Debe tener un objeto de categoría válido asignado (No nulo).</li>
+     * </ul>
+     */
 	@Override
 	public boolean validar() throws AgenciaException {
         if (codDestino == null || codDestino.trim().length() != 5) {

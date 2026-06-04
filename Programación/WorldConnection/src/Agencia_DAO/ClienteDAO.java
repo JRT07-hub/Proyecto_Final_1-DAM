@@ -6,11 +6,16 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementación del DAO para la gestión de Clientes.
+ * Mapea las operaciones CRUD y llamadas a procedimientos almacenados para la tabla 'cliente'.
+ */
 public class ClienteDAO implements Idao<ClienteDTO, String> {
 
-    // =========================================================================
-    // 1. OPERACIÓN: INSERTAR CLIENTE (C de CRUD)
-    // =========================================================================
+	/**
+     * {@inheritDoc}
+     * Registra un cliente con sus datos básicos (DNI, Nombre, Correo, Teléfono, Dirección y Pasaporte).
+     */
     @Override
     public void insertar(ClienteDTO cliente) throws AgenciaException {
     	
@@ -33,9 +38,10 @@ public class ClienteDAO implements Idao<ClienteDTO, String> {
         }
     }
 
-    // =========================================================================
-    // 2. OPERACIÓN: MODIFICAR CLIENTE (U de CRUD)
-    // =========================================================================
+    /**
+    * {@inheritDoc}
+    * Actualiza la información del cliente. Controla de forma segura los valores nulos en el campo Pasaporte.
+    */
     @Override
     public void modificar(ClienteDTO cliente) throws AgenciaException {
         String sql = "UPDATE cliente SET NombreCompleto = ?, Correo = ?, Telefono = ?, Direccion = ?, Pasaporte = ? WHERE DNI = ?";
@@ -62,9 +68,10 @@ public class ClienteDAO implements Idao<ClienteDTO, String> {
         }
     }
 
-    // =========================================================================
-    // 3. OPERACIÓN: ELIMINAR CLIENTE (D de CRUD)
-    // =========================================================================
+    /**
+     * {@inheritDoc}
+     * @throws AgenciaException Si el cliente cuenta con reservas activas en el sistema.
+     */
     @Override
     public void eliminar(String dni) throws AgenciaException {
         String sql = "DELETE FROM cliente WHERE DNI = ?";
@@ -79,10 +86,11 @@ public class ClienteDAO implements Idao<ClienteDTO, String> {
             throw new AgenciaException("Error al eliminar cliente (Comprueba que no tenga reservas activas asociadas): " + e.getMessage());
         }
     }
-
- // =========================================================================
-    // 4. OPERACIÓN: BUSCAR POR ID / DNI (R de CRUD)
-    // =========================================================================
+    
+    /**
+     * {@inheritDoc}
+     * Filtra la búsqueda mediante la clave primaria de tipo String (DNI).
+     */
     @Override
     public ClienteDTO buscarPorId(String dni) throws AgenciaException {
         String sql = "SELECT * FROM cliente WHERE DNI = ?";
@@ -113,9 +121,9 @@ public class ClienteDAO implements Idao<ClienteDTO, String> {
         return cliente;
     }
 
-    // =========================================================================
-    // 5. OPERACIÓN: LISTAR TODOS LOS CLIENTES (R de CRUD)
-    // =========================================================================
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<ClienteDTO> listarTodos() throws AgenciaException {
         String sql = "SELECT * FROM cliente";
@@ -142,12 +150,12 @@ public class ClienteDAO implements Idao<ClienteDTO, String> {
         return lista;
     }
 
-    // =========================================================================
-    // EXTRA: ENLAZAR CON TUS SCRIPTS PROCEDIMIENTOS ALMACENADOS DE MYSQL
-    // =========================================================================
     /**
-     * Mapea PROCEDIMIENTO 3: sp_AplicarDescuentoFidelidad.
-     * Modifica el importe masivo de las reservas de los clientes VIP directamente en la BD.
+     * Aplica de manera masiva un descuento por fidelidad a los importes de las reservas en la base de datos.
+     * Mapea de forma directa el Procedimiento Almacenado de MySQL: {@code sp_AplicarDescuentoFidelidad}.
+     *
+     * @param porcentaje El porcentaje de descuento a aplicar (ej. 10.0 para un 10%).
+     * @throws AgenciaException Si ocurre un error al invocar o ejecutar el procedimiento almacenado.
      */
     public void aplicarDescuentoVIPEnBD(double porcentaje) throws AgenciaException {
         String sql = "{CALL sp_AplicarDescuentoFidelidad(?)}";

@@ -1,0 +1,17 @@
+CLIENTE(DNI,NombreCompleto,Correo,Direccion,Telefono,Pasaporte)
+PK:DNI
+
+EMPLEADO(ID_Empleado, NombreCompleto, Cargo, Especialidad, Turno, Experiencia)
+PK:ID_Empleado
+
+CATEGORIA(ID_Categoria, NombreCat)
+PK:ID_Categoria
+
+DESTINO(Cod_Destino, NombreDestino, Pais, Ciudad, Descripcion, PrecioBase, Duracion, Disponibilidad, ID_Categoria)
+PK:Cod_Destino
+
+RESERVA(ID_Reserva, FechaReserva, FechaSalida, FechaRegreso, NumViajeros, ImporteTotal, Estado, DNI_Cliente, ID_Empleado, Cod_Destino)
+PK:ID_Reserva
+FK1:DNI_Cliente REFERENCES CLIENTE(DNI) NOT NULL
+FK2:ID_Empleado REFERENCES EMPLEADO(ID_Empleado) NOT NULL
+FK3:Cod_Destino REFERENCES DESTINO(Cod_Destino) NOT NULL

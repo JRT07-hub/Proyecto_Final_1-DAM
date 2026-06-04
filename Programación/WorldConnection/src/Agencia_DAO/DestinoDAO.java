@@ -8,11 +8,16 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementación del DAO para la gestión de Destinos Turísticos.
+ * Resuelve de manera relacional la asociación hacia el objeto {@link CategoriaDTO} inyectando su correspondiente DAO.
+ */
 public class DestinoDAO implements Idao<DestinoDTO, String> {
-    
-    // Instanciamos el DAO de categorías para resolver la relación/asociación relacional
     private CategoriaDAO categoriaDao = new CategoriaDAO();
-
+    /**
+     * {@inheritDoc}
+     * Extrae el ID numérico de la categoría anidada en el DTO para guardarlo como clave foránea.
+     */
     @Override
     public void insertar(DestinoDTO destino) throws AgenciaException {
         String sql = "INSERT INTO destino (Cod_Destino, NombreDestino, Pais, Ciudad, Descripcion, PrecioBase, Duracion, Disponibilidad, ID_Categoria) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -27,7 +32,6 @@ public class DestinoDAO implements Idao<DestinoDTO, String> {
             ps.setDouble(6, destino.getPrecioBase());
             ps.setInt(7, destino.getDuracion());
             ps.setBoolean(8, destino.isDisponibilidad());
-            // Extraemos el ID numérico del objeto Categoria interno
             ps.setInt(9, destino.getCategoria().getIdCategoria());
             
             ps.executeUpdate();
@@ -35,7 +39,9 @@ public class DestinoDAO implements Idao<DestinoDTO, String> {
             throw new AgenciaException("Error de BD al registrar el destino: " + e.getMessage());
         }
     }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void modificar(DestinoDTO destino) throws AgenciaException {
         String sql = "UPDATE destino SET NombreDestino = ?, Pais = ?, Ciudad = ?, Descripcion = ?, PrecioBase = ?, Duracion = ?, Disponibilidad = ?, ID_Categoria = ? WHERE Cod_Destino = ?";
@@ -50,14 +56,17 @@ public class DestinoDAO implements Idao<DestinoDTO, String> {
             ps.setInt(6, destino.getDuracion());
             ps.setBoolean(7, destino.isDisponibilidad());
             ps.setInt(8, destino.getCategoria().getIdCategoria());
-            ps.setString(9, destino.getCodDestino()); // Filtro WHERE
+            ps.setString(9, destino.getCodDestino());
             
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new AgenciaException("Error de BD al actualizar el destino: " + e.getMessage());
         }
     }
-
+    /**
+     * {@inheritDoc}
+     * @throws AgenciaException Si el destino ya se encuentra enlazado en alguna reserva activa.
+     */
     @Override
     public void eliminar(String codDestino) throws AgenciaException {
         String sql = "DELETE FROM destino WHERE Cod_Destino = ?";
@@ -69,7 +78,10 @@ public class DestinoDAO implements Idao<DestinoDTO, String> {
             throw new AgenciaException("Error al eliminar destino (Verifica que no esté enlazado en ninguna reserva): " + e.getMessage());
         }
     }
-
+    /**
+     * {@inheritDoc}
+     * Recupera el destino y utiliza de forma interna el {@link CategoriaDAO} para armar la relación completa de objetos.
+     */
     @Override
     public DestinoDTO buscarPorId(String codDestino) throws AgenciaException {
         String sql = "SELECT * FROM destino WHERE Cod_Destino = ?";
@@ -80,12 +92,8 @@ public class DestinoDAO implements Idao<DestinoDTO, String> {
             ps.setString(1, codDestino);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    // 1. Recuperamos la clave foránea numérica
                     int idCat = rs.getInt("ID_Categoria");
-                    // 2. Buscamos el objeto de la categoría completo usando su respectivo DAO
                     CategoriaDTO categoria = categoriaDao.buscarPorId(idCat);
-                    
-                    // 3. Construimos el DTO inyectándole su categoría resuelta
                     destino = new DestinoDTO(
                         rs.getString("Cod_Destino"),
                         rs.getString("NombreDestino"),
@@ -104,7 +112,10 @@ public class DestinoDAO implements Idao<DestinoDTO, String> {
         }
         return destino;
     }
-
+    /**
+     * {@inheritDoc}
+     * Devuelve todos los destinos construyendo cada uno con su objeto Categoría completamente resuelto.
+     */
     @Override
     public List<DestinoDTO> listarTodos() throws AgenciaException {
         String sql = "SELECT * FROM destino";

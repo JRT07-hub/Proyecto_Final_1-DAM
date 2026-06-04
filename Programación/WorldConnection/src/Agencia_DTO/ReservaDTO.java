@@ -3,7 +3,10 @@ package Agencia_DTO;
 import java.time.LocalDate;
 
 import Agencia_Excepciones.AgenciaException;
-
+/**
+ * DTO Central del sistema que modela una Reserva de viaje.
+ * Agrupa de forma relacional al {@link ClienteDTO}, el {@link EmpleadoDTO} gestor y el {@link DestinoDTO} de viaje.
+ */
 public class ReservaDTO implements Validar {
     private int idReserva,numViajeros;
     private double importeTotal;
@@ -13,6 +16,11 @@ public class ReservaDTO implements Validar {
     private EmpleadoDTO empleado;
     private DestinoDTO destino;
     
+    /**
+     * Constructor para Nuevas Reservas. 
+     * Asigna automáticamente la fecha actual del sistema como fecha de creación, 
+     * establece el estado inicial en 'Pendiente' y calcula el precio total.
+     */
     public ReservaDTO(LocalDate fechaSalida, LocalDate fechaRegreso, int numViajeros,ClienteDTO cliente, EmpleadoDTO empleado, DestinoDTO destino) throws AgenciaException {
         this.fechaReserva = LocalDate.now();
         this.fechaSalida = fechaSalida;
@@ -26,7 +34,7 @@ public class ReservaDTO implements Validar {
         validar();
     }
 
-
+    /** Constructor Completo utilizado para mapear registros históricos provenientes de la Base de Datos. */
     public ReservaDTO(int idReserva, LocalDate fechaReserva, LocalDate fechaSalida, LocalDate fechaRegreso,int numViajeros, double importeTotal, String estado, ClienteDTO cliente, EmpleadoDTO empleado, DestinoDTO destino) throws AgenciaException {
         this.idReserva = idReserva;
         this.fechaReserva = fechaReserva;
@@ -40,13 +48,25 @@ public class ReservaDTO implements Validar {
         this.destino = destino;
         validar();
     }
-
+    /**
+    * Lógica Automática de Negocio: Calcula el importe base total de la reserva multiplicando 
+    * el precio por día del destino por la cantidad de viajeros y la duración total del viaje en días.
+    */
     public void calcularImporteTotal() {
         if (this.destino != null) {
             this.importeTotal = this.destino.getPrecioBase() * this.numViajeros;
         }
     }
-
+    /**
+     * Valida los parámetros temporales y lógicos de la reserva.
+     * Reglas aplicadas:
+     * <ul>
+     * <li>La fecha de salida debe ser igual o posterior al día actual.</li>
+     * <li>La fecha de regreso debe ser estrictamente posterior a la fecha de salida.</li>
+     * <li>El número de viajeros debe ser al menos 1 o más.</li>
+     * <li>Las entidades Cliente, Empleado y Destino asociadas no pueden ser nulas.</li>
+     * </ul>
+     */
     @Override
     public boolean validar() throws AgenciaException {
         if (this.cliente == null) {
@@ -72,7 +92,7 @@ public class ReservaDTO implements Validar {
         }
         return true;
     }
-    
+    // GETTERS Y SETTERS
     public int getIdReserva() { return idReserva; }
     public void setIdReserva(int idReserva) { this.idReserva = idReserva; }
     public LocalDate getFechaReserva() { return fechaReserva; }
@@ -80,7 +100,7 @@ public class ReservaDTO implements Validar {
     public LocalDate getFechaSalida() { return fechaSalida; }
     public void setFechaSalida(LocalDate fechaSalida) { this.fechaSalida = fechaSalida; }
     public LocalDate getFechaRegreso() { return fechaRegreso; }
-    public void setFechaRegreso(LocalDate java_fechaRegreso) { this.fechaRegreso = java_fechaRegreso; }
+    public void setFechaRegreso(LocalDate fechaRegreso) { this.fechaRegreso = fechaRegreso; }
     public int getNumViajeros() { return numViajeros; }
     public void setNumViajeros(int numViajeros) { this.numViajeros = numViajeros; }
     public double getImporteTotal() { return importeTotal; }

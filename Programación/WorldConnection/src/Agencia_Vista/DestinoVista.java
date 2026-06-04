@@ -9,12 +9,22 @@ import Agencia_Excepciones.AgenciaException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
-
+/**
+ * Componente de interfaz para la gestión del Catálogo de Destinos Turísticos.
+ * <p>Coordina la captura de datos comerciales de los destinos (precios, disponibilidad, duraciones) 
+ * y se apoya de forma síncrona en el {@link CategoriaDAO} para verificar y asociar correctamente 
+ * la integridad de las categorías foráneas antes de delegar la persistencia al {@link DestinoDAO}.</p>
+ */
 public class DestinoVista {
     private static DestinoDAO destinoDao = new DestinoDAO();
-    private static CategoriaDAO categoriaDao = new CategoriaDAO(); // Auxiliar para validar integridad
+    private static CategoriaDAO categoriaDao = new CategoriaDAO();
     private static Scanner teclado = new Scanner(System.in);
-
+    /**
+     * Arranca el ciclo de vida del menú del catálogo de destinos.
+     * <p>Ofrece opciones de consola para ingresar destinos, consultar inventario, 
+     * actualizar tarifas e información geográfica o remover destinos del catálogo siempre que 
+     * se respeten las restricciones de integridad de la base de datos.</p>
+     */
     public static void ejecutar() {
         int op = 0;
         do {

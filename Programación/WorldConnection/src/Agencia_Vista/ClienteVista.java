@@ -10,11 +10,21 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-
+/**
+ * Interfaz de usuario por consola para la administración del módulo de Clientes.
+ * <p>Además de encapsular el flujo CRUD básico mediante el {@link ClienteDAO}, 
+ * esta clase implementa lógica avanzada en memoria para el filtrado mediante Streams, 
+ * mapas asociativos hashed y la reordenación natural de colecciones mediante estructuras arbóreas.</p>
+ */
 public class ClienteVista {
     private static ClienteDAO clienteDao = new ClienteDAO();
     private static Scanner teclado = new Scanner(System.in);
-
+    /**
+     * Despliega el menú de administración de clientes en la terminal.
+     * <p>Permite la gestión de perfiles de clientes y expone operaciones especiales como 
+     * la aplicación masiva de descuentos VIP (Procedimientos Almacenados) y la consulta analítica 
+     * estructurada de clientes internacionales utilizando agrupaciones en memoria (TreeMap).</p>
+     */
     public static void ejecutar() {
         int opcion = 0;
 
@@ -22,13 +32,13 @@ public class ClienteVista {
             System.out.println("\n=============================================");
             System.out.println("           MENÚ GESTIÓN DE CLIENTES            ");
             System.out.println("=============================================");
-            System.out.println("1. Registrar nuevo cliente (INSERT)");
-            System.out.println("2. Buscar cliente por DNI (SELECT BY ID)");
-            System.out.println("3. Modificar datos de un cliente (UPDATE)");
-            System.out.println("4. Eliminar un cliente de la BD (DELETE)");
-            System.out.println("5. Mostrar todos los clientes (SELECT ALL)");
-            System.out.println("6. Aplicar descuento masivo VIP (PROCEDIMIENTO ALMACENADO)");
-            System.out.println("7. Consultar clientes con pasaporte (STREAMS Y MAPAS)");
+            System.out.println("1. Registrar nuevo cliente ");
+            System.out.println("2. Buscar cliente por DNI ");
+            System.out.println("3. Modificar datos de un cliente ");
+            System.out.println("4. Eliminar un cliente de la BD ");
+            System.out.println("5. Mostrar todos los clientes ");
+            System.out.println("6. Aplicar descuento masivo VIP ");
+            System.out.println("7. Consultar clientes con pasaporte ");
             System.out.println("8. Volver al menú principal");
             System.out.println("=============================================");
             System.out.print("Seleccione una opción: ");

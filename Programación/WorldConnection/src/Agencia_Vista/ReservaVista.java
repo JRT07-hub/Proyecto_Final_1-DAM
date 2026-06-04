@@ -16,7 +16,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
-
+/**
+ * Subsistema central de presentación encargado de la Contratación y Gestión de Reservas.
+ * <p>Esta clase cuenta con un alto grado de acoplamiento relacional, interactuando con los DAOs 
+ * de Clientes, Empleados y Destinos para validar la existencia previa de todas las entidades 
+ * implicadas en una transacción de viaje antes de formalizar la reserva.</p>
+ */
 public class ReservaVista {
     private static ReservaDAO reservaDao = new ReservaDAO();
     private static ClienteDAO clienteDao = new ClienteDAO();
@@ -25,7 +30,13 @@ public class ReservaVista {
 
     private static Scanner teclado = new Scanner(System.in);
     private static DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
+    
+    /**
+     * Lanza el menú principal del sistema de reservas de la agencia de viajes.
+     * <p>Permite registrar un nuevo contrato de viaje capturando y parseando formatos de fecha locales, 
+     * desplegar el histórico completo de expedientes del sistema, buscar de forma indexada por ID 
+     * de reserva y modificar estados contractuales (Ej: Pendiente, Confirmada, Cancelada).</p>
+     */
     public static void ejecutar() {
         int op = 0;
         do {
@@ -62,7 +73,7 @@ public class ReservaVista {
                         System.out.print("Fecha Regreso (dd/mm/aaaa): "); LocalDate fReg = LocalDate.parse(teclado.nextLine(), fmt);
                         System.out.print("Número de Viajeros: "); int viajeros = Integer.parseInt(teclado.nextLine());
 
-                        double total = dest.getPrecioBase() * viajeros; // Lógica automatizada
+                        double total = dest.getPrecioBase() * viajeros;
                         
                         ReservaDTO nueva = new ReservaDTO(idR, LocalDate.now(), fSal, fReg, viajeros, total, "Confirmada", cli, emp, dest);
                         reservaDao.insertar(nueva);
@@ -103,8 +114,6 @@ public class ReservaVista {
                         String nEst = teclado.nextLine();
                         System.out.print("Modificar número de viajeros (" + rM.getNumViajeros() + "): ");
                         int nViajeros = Integer.parseInt(teclado.nextLine());
-
-                        // Recalculamos el importe automáticamente basándonos en el cambio de viajeros
                         double nTotal = rM.getDestino().getPrecioBase() * nViajeros;
 
                         ReservaDTO resModificada = new ReservaDTO(idM, rM.getFechaReserva(), rM.getFechaSalida(), rM.getFechaRegreso(), nViajeros, nTotal, nEst, rM.getCliente(), rM.getEmpleado(), rM.getDestino());
