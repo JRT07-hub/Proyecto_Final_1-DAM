@@ -5260,13 +5260,13 @@
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O22">
       <dia:attribute name="obj_pos">
-        <dia:point val="-12.1984,24.0223"/>
+        <dia:point val="-20.0984,32.0223"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-12.2484,23.9723;2.98156,30.6723"/>
+        <dia:rectangle val="-20.1484,31.9723;-4.91844,38.6723"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="-12.1984,24.0223"/>
+        <dia:point val="-20.0984,32.0223"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
         <dia:real val="15.130000000000001"/>
@@ -5577,20 +5577,22 @@
     </dia:object>
     <dia:object type="UML - Association" version="2" id="O23">
       <dia:attribute name="obj_pos">
-        <dia:point val="-4.63344,30.6727"/>
+        <dia:point val="-4.96844,35.7223"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-4.68344,30.6227;2.84005,38.9238"/>
+        <dia:rectangle val="-5.01844,35.6723;2.84005,41.3238"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="-4.63344,30.6727"/>
-        <dia:point val="-4.63344,37.3238"/>
-        <dia:point val="2.79005,37.3238"/>
+        <dia:point val="-4.96844,35.7223"/>
+        <dia:point val="-1.08919,35.7223"/>
+        <dia:point val="-1.08919,39.7238"/>
+        <dia:point val="2.79005,39.7238"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
+        <dia:enum val="0"/>
         <dia:enum val="1"/>
         <dia:enum val="0"/>
       </dia:attribute>
@@ -5649,8 +5651,8 @@
         <dia:color val="#000000ff"/>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O22" connection="20"/>
-        <dia:connection handle="1" to="O18" connection="16"/>
+        <dia:connection handle="0" to="O22" connection="13"/>
+        <dia:connection handle="1" to="O18" connection="22"/>
       </dia:connections>
     </dia:object>
     <dia:object type="UML - Dependency" version="1" id="O24">
